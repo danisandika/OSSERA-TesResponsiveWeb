@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OSSera Web</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link href="dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css"/>
+</head>
+ 
+<body class="body">
+ 
+    <div class="header">
+        <h1>Covid Information</h1>
+    </div>
+ 
+    <div class="container">
+        <div class="main-100">
+            <div id="vmap" class="maps"></div>
+            
+        </div>
+
+        <div class="main-100">
+            <table id="item" class="covid"></table>
+        </div>
+ 
+        <div class="main-100">
+            <h2>List Infection Covid-19</h2>
+            <canvas id="barChart" style="height: 400px;"></canvas>
+        </div>
+
+        <div class="main-100">
+            <h2>Data Covid-19</h2>
+            <canvas id="lineChart" style="height: 400px;"></canvas>
+        </div>
+ 
+    </div>
+ 
+    <div class="footer"> © copyright Danis</div>
+ 
+<script src="js/script.js"></script>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="js/chart.min.js"></script>
+<script type="text/javascript" src="dist/jquery.vmap.js"></script>
+<script type="text/javascript" src="dist/jquery.vmap.indonesia.js" charset="utf-8"></script>
+<script>
+    	
+</script>
+<script>
+        var datacov = [
+            ['PATH11','DKI Jakarta',500,300,10],
+            ['PATH14','Banten',400,200,20],
+            ['PATH12','Jawa Barat',300,100,6],
+            ['PATH13','Jawa Tengah',300,200,7],
+            ['PATH16','Yogyakarta',100,50,8],
+            ['PATH15','Jawa Timur',400,200,10],
+        ];
+
+        var dataRegion = new Array();
+        var dataInfec  = new Array();
+        var dataDeath  = new Array();
+        var dataRecov  = new Array();
+        for(i=0;i<datacov.length;i++){
+            dataRegion.push(datacov[i][1]);
+            dataInfec.push(datacov[i][2]);
+            dataRecov.push(datacov[i][3]);
+            dataDeath.push(datacov[i][4]);
+        }
+
+
+      jQuery(document).ready(function () {
+        jQuery('#vmap').vectorMap({
+          map: 'indonesia_id',
+          enableZoom: true,
+          showTooltip: true,
+          selectedColor: null,
+          onRegionClick: function(event, code, region){
+            var result = "";
+            for(let i=0;i<datacov.length;i++){
+                if(datacov[i][0] == code.toUpperCase()){
+                    result = datacov[i];
+                    console.log(datacov[i]);
+                    break;
+                }
+            }
+            var message = 'Region ' + result[1] + "\nTotal Intected : "+result[2] +"\nRecover : "+result[3]+"\nDeath : "+result[4];
+            alert(message);
+            event.preventDefault();
+          }
+        });
+      });
+
+        var barChart = document.getElementById('barChart').getContext('2d');
+        var lineChart = document.getElementById('lineChart').getContext('2d');
+        var myBarChart = new Chart(barChart, {
+			type: 'bar',
+			data: {
+				labels: dataRegion,
+				datasets : [{
+					label: "Region",
+					backgroundColor: 'rgb(23, 125, 255)',
+					borderColor: 'rgb(23, 125, 255)',
+					data: dataInfec,
+				}],
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true
+						}
+					}]
+				},
+			}
+		});
+
+        var lineChart = new Chart(lineChart, {
+			type: 'line',
+			data: {
+				labels: dataRegion,
+				datasets: [{
+					label: "Infected",
+					borderColor: "#1d7af3",
+					pointBorderColor: "#FFF",
+					pointBackgroundColor: "#1d7af3",
+					pointBorderWidth: 2,
+					pointHoverRadius: 4,
+					pointHoverBorderWidth: 1,
+					pointRadius: 4,
+					backgroundColor: 'transparent',
+					fill: true,
+					borderWidth: 2,
+					data: dataInfec
+				},{
+					label: "Recover",
+					borderColor: "#59d05d",
+					pointBorderColor: "#FFF",
+					pointBackgroundColor: "#59d05d",
+					pointBorderWidth: 2,
+					pointHoverRadius: 4,
+					pointHoverBorderWidth: 1,
+					pointRadius: 4,
+					backgroundColor: 'transparent',
+					fill: true,
+					borderWidth: 2,
+					data: dataRecov
+				}, {
+					label: "Death",
+					borderColor: "#f3545d",
+					pointBorderColor: "#FFF",
+					pointBackgroundColor: "#f3545d",
+					pointBorderWidth: 2,
+					pointHoverRadius: 4,
+					pointHoverBorderWidth: 1,
+					pointRadius: 4,
+					backgroundColor: 'transparent',
+					fill: true,
+					borderWidth: 2,
+					data: dataDeath
+				}]
+			},
+			options : {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					position: 'top',
+				},
+				tooltips: {
+					bodySpacing: 4,
+					mode:"nearest",
+					intersect: 0,
+					position:"nearest",
+					xPadding:10,
+					yPadding:10,
+					caretPadding:10
+				},
+				layout:{
+					padding:{left:15,right:15,top:15,bottom:15}
+				}
+			}
+		});
+    </script>
+ 
+</html>
